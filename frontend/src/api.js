@@ -2,7 +2,8 @@ import axios from "axios";
 
 export const api = axios.create({ baseURL: "http://localhost:5000" });
 
-export const listOrcamentos = () => api.get("/orcamentos");
+export const listOrcamentos = (q) =>
+  api.get("/orcamentos", { params: { q } });
 export const createOrcamento = (payload) => api.post("/orcamentos", payload);
 export const getOrcamento = (id) => api.get(`/orcamentos/${id}`);
 export const updateOrcamento = (id, payload) => api.put(`/orcamentos/${id}`, payload);

@@ -6,16 +6,28 @@ export default function List(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [q, setQ] = useState("");
 
-  const load = async () => {
+  const load = async (query = "") => {
     try {
       setLoading(true);
-      const res = await listOrcamentos();
+      const res = await listOrcamentos(query);
       setData(res.data || []);
     } catch (e){
       console.error(e);
       setError("Falha ao carregar orçamentos.");
     } finally { setLoading(false); }
+  };
+
+  const onSearchChange = async (e) => {
+    const value = e.target.value;
+    setQ(value);
+    await load(value);
+  };
+
+  const onSearchSubmit = async (e) => {
+    e.preventDefault();
+    await load(q);
   };
 
   useEffect(() => { load(); }, []);
@@ -38,7 +50,18 @@ export default function List(){
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
         <h2 style={{margin:0}}>Orçamentos</h2>
-        <button className="btn btn-ghost" onClick={load}>Recarregar</button>
+        <div style={{display:"flex", gap:8, alignItems:"center"}}>
+          <form onSubmit={onSearchSubmit} style={{display:"flex", gap:8}}>
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={q}
+              onChange={onSearchChange}
+            />
+            <button className="btn btn-ghost" type="submit">Buscar</button>
+          </form>
+          <button className="btn btn-ghost" onClick={() => load()}>Recarregar</button>
+        </div>
       </div>
 
       <table className="table">

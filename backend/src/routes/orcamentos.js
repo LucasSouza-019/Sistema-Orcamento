@@ -34,15 +34,30 @@ function brl(n) {
 
 // LISTAR (resumo)
 router.get("/", (req, res) => {
-  const sql = `
+  const { q } = req.query;
+
+  let sql = `
     SELECT id,
            cliente_nome AS cliente,
            descricao,
            total AS valor,
            data_criacao
-    FROM orcamentos
-    ORDER BY id DESC`;
-  db.query(sql, (err, rows) => {
+    FROM orcamentos`;
+  const params = [];
+
+  if (q) {
+    if (/^\d+$/.test(q)) {
+      sql += " WHERE id = ?";
+      params.push(q);
+    } else {
+      sql += " WHERE cliente_nome LIKE ?";
+      params.push(`%${q}%`);
+    }
+  }
+
+  sql += " ORDER BY id DESC";
+
+  db.query(sql, params, (err, rows) => {
     if (err) return res.status(500).json({ error: "Erro ao listar" });
     res.json(rows);
   });

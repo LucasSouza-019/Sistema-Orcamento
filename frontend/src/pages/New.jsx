@@ -52,6 +52,7 @@ export default function New(){
   return (
     <form onSubmit={onSubmit}>
       <h2 style={{marginTop:0}}>Novo Orçamento</h2>
+      {error && <div className="helper" style={{marginBottom:12}}>{error}</div>}
 
       <div className="row">
         <div>
